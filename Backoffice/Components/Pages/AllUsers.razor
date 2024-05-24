@@ -33,8 +33,8 @@ else
                     <td>@user.FirstName</td>
                     <td>@user.LastName</td>
                     <td>@user.Email</td>
-                   @*  <td>@user.City</td> *@
-                    <td>@user.PhoneNumber</td>
+                    <td>@user.City</td>
+                    <td>@user.Phone</td>
                 </tr>
             }
         </tbody>
@@ -82,8 +82,8 @@ else
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;
         public string Email { get; set; } = null!;
-        // public string City { get; set; } = null!;
-        public string PhoneNumber { get; set; } = null!;
+        public string City { get; set; } = null!;
+        public string Phone { get; set; } = null!;
     }
 }
 
