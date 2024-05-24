@@ -10,7 +10,8 @@ var host = new HostBuilder()
     {
         services.AddApplicationInsightsTelemetryWorkerService();
         services.ConfigureFunctionsApplicationInsights();
-        services.AddDbContext<DataContext>(x => x.UseSqlServer(Environment.GetEnvironmentVariable("USER_IDENTITY_DB")));
+        services.AddDbContext<DataContext>(x => 
+        x.UseSqlServer(Environment.GetEnvironmentVariable("USER_DATABASE")));
     })
     .Build();
 
