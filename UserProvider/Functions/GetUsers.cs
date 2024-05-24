@@ -22,7 +22,7 @@ public class GetUsers
     }
 
     [Function("GetUsers")]
-    public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get", Route = "users")] HttpRequestData req)
+    public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get", Route = "GetUsers")] HttpRequestData req)
     {
         try
         {
