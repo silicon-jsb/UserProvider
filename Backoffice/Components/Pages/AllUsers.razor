@@ -57,33 +57,38 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        try
-        {
-            var functionKey = Configuration["AzureFunctionKeyUsers"];
-            var response = await HttpClient.GetAsync($"https://userprovider-silicon-jsb.azurewebsites.net/api/GetUsers{functionKey}");
-            if (response.IsSuccessStatusCode)
-            {
-                users = await response.Content.ReadFromJsonAsync<User[]>();
-            }
-            else
-            {
-                ErrorMessage = "Failed to fetch users. Please try again later.";
-            }
-        }
-        catch (Exception ex)
-        {
-            ErrorMessage = "An error occurred while fetching users. " + ex.Message;
-        }
+        users = await HttpClient.GetFromJsonAsync<User[]>("http://localhost:7117/api/users");
     }
+
+    // protected override async Task OnInitializedAsync()
+    // {
+    //     try
+    //     {
+    //         var functionKey = Configuration["AzureFunctionKeyUsers"];
+    //         var response = await HttpClient.GetAsync($"https://userprovider-silicon-jsb.azurewebsites.net/api/GetUsers{functionKey}");
+    //         if (response.IsSuccessStatusCode)
+    //         {
+    //             users = await response.Content.ReadFromJsonAsync<User[]>();
+    //         }
+    //         else
+    //         {
+    //             ErrorMessage = "Failed to fetch users. Please try again later.";
+    //         }
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         ErrorMessage = "An error occurred while fetching users. " + ex.Message;
+    //     }
+    // }
 
     private class User
     {
-        public int Id { get; set; }
+        public string Id { get; set; } = null!;
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;
         public string Email { get; set; } = null!;
-        public string City { get; set; } = null!;
-        public string Phone { get; set; } = null!;
+        public string? City { get; set; }
+        public string? Phone { get; set; } 
     }
 }
 
