@@ -57,29 +57,24 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        users = await HttpClient.GetFromJsonAsync<User[]>("http://localhost:7117/api/users");
+        try
+        {
+            var functionKey = Configuration["AzureFunctionKeyUsers"];
+            var response = await HttpClient.GetAsync($"https://userprovider-newsilicon-jsb.azurewebsites.net/api/users?code={functionKey}");
+            if (response.IsSuccessStatusCode)
+            {
+                users = await response.Content.ReadFromJsonAsync<User[]>();
+            }
+            else
+            {
+                ErrorMessage = "Failed to fetch users. Please try again later.";
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = "An error occurred while fetching users. " + ex.Message;
+        }
     }
-
-    // protected override async Task OnInitializedAsync()
-    // {
-    //     try
-    //     {
-    //         var functionKey = Configuration["AzureFunctionKeyUsers"];
-    //         var response = await HttpClient.GetAsync($"https://userprovider-silicon-jsb.azurewebsites.net/api/GetUsers{functionKey}");
-    //         if (response.IsSuccessStatusCode)
-    //         {
-    //             users = await response.Content.ReadFromJsonAsync<User[]>();
-    //         }
-    //         else
-    //         {
-    //             ErrorMessage = "Failed to fetch users. Please try again later.";
-    //         }
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         ErrorMessage = "An error occurred while fetching users. " + ex.Message;
-    //     }
-    // }
 
     private class User
     {
