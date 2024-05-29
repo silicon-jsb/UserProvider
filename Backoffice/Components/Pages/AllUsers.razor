@@ -1,7 +1,9 @@
 ﻿@using System.Net.Http
 @inject IConfiguration Configuration
+@inject IJSRuntime JSRuntime
 
 @page "/users"
+@rendermode InteractiveServer
 @attribute [StreamRendering]
 
 <PageTitle>All users</PageTitle>
@@ -21,8 +23,7 @@ else
                 <th>Firstname</th>
                 <th>Lastname</th>
                 <th>Email</th>
-                <th>City</th>
-                <th>Phone</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
@@ -33,34 +34,32 @@ else
                     <td>@user.FirstName</td>
                     <td>@user.LastName</td>
                     <td>@user.Email</td>
-                    <td>@user.City</td>
-                    <td>@user.Phone</td>
+                    <td><button class="btn btn-danger" @onclick="() => ConfirmAndDeleteUser(user.Id)">Delete</button></td>
                 </tr>
             }
         </tbody>
     </table>
 }
 
-@if (!string.IsNullOrEmpty(ErrorMessage))
-{
-    <p class="text-danger">@ErrorMessage</p>
-}
-
-  
 @code {
     [Inject]
     private HttpClient? HttpClient { get; set; }
 
     private string? ErrorMessage { get; set; }
 
-    private User[]? users; 
+    private User[]? users;
 
     protected override async Task OnInitializedAsync()
+    {
+        await LoadUsers();
+    }
+
+    public async Task LoadUsers()
     {
         try
         {
             var functionKey = Configuration["AzureFunctionKeyUsers"];
-            var response = await HttpClient.GetAsync($"https://userprovider-newsilicon-jsb.azurewebsites.net/api/users?code={functionKey}");
+            var response = await HttpClient!.GetAsync($"https://userprovider-newsilicon-jsb.azurewebsites.net/api/users?code={functionKey}");
             if (response.IsSuccessStatusCode)
             {
                 users = await response.Content.ReadFromJsonAsync<User[]>();
@@ -76,6 +75,36 @@ else
         }
     }
 
+    public async Task DeleteUser(string userId)
+    {
+        try
+        {
+            var functionKey = Configuration["AzureFunctionKeyDeleteUser"];
+            var response = await HttpClient!.DeleteAsync($"https://userprovider-newsilicon-jsb.azurewebsites.net/api/users/{userId}?code={functionKey}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                await LoadUsers();
+            }
+            else
+            {
+                ErrorMessage = "Failed to delete user. Please try again later.";
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = "An error occurred while deleting the user. " + ex.Message;
+        }
+    }
+
+    public async Task ConfirmAndDeleteUser(string userId)
+    {
+        if (await JSRuntime.InvokeAsync<bool>("confirm", $"Are you sure you want to delete user {userId}?"))
+        {
+            await DeleteUser(userId);
+        }
+    }
+
     private class User
     {
         public string Id { get; set; } = null!;
@@ -83,7 +112,6 @@ else
         public string LastName { get; set; } = null!;
         public string Email { get; set; } = null!;
         public string? City { get; set; }
-        public string? Phone { get; set; } 
+        public string? Phone { get; set; }
     }
 }
-

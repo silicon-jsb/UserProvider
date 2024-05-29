@@ -5,7 +5,7 @@ VisualStudioVersion = 17.10.34916.146
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserProvider", "UserProvider\UserProvider.csproj", "{8F561DA7-8654-4237-A983-8B225EB4433B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backoffice", "Backoffice\Backoffice.csproj", "{4D304CB3-5844-4E12-834B-32CAD524D6EA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Backoffice", "Backoffice\Backoffice.csproj", "{4D304CB3-5844-4E12-834B-32CAD524D6EA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
